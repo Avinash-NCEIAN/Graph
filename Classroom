@@ -1,0 +1,56 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+vector<vector<int>>g;
+vector<bool> visited;
+
+void printer(vector<bool> v){
+    cout<<"[";
+    for(auto x:v)cout<<x<<", ";
+    cout<<"]";
+}
+
+int dfs(int node){
+    visited[node] = true;
+    int cnt = 1;
+    for(auto v: g[node]){
+        if(!visited[v]){
+            cnt+=dfs(v);
+        }
+        
+    }
+    
+    return cnt;
+    
+}
+
+int main()
+{
+    int n,m;
+    cin>>n>>m;
+    
+    // visited.assign(n+1,false);
+    //g.resize(n+1);
+    g.assign(n + 1, vector<int>());
+    for(int i = 1;i<=m;i++){
+        int a,b;
+        cin>>a>>b;
+        g[a].push_back(b);
+        g[b].push_back(a);
+    }
+    
+    for(int i = 0;i<=n;i++){
+        visited.assign(n+1,false);
+        dfs(i);
+        printer(visited);
+        int cnt  = 0;
+        for(int j = 1;j<=n;j++){
+            if(visited[j])cnt++;
+        }
+        
+        cout<<endl<<cnt<<endl;
+    }
+    
+    return 0;
+}
+
