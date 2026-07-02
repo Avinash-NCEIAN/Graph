@@ -1,8 +1,8 @@
 #include<bits/stdc++.h>
 using namespace std;
-int n,m;
+
 vector<vector<int>>g;
-vector<bool> visited(n,false);
+vector<bool> visited;
 
 void dfs(int node){
     visited[node] = true;
@@ -16,7 +16,7 @@ void dfs(int node){
 
 int main()
 {
-    
+    int n,m;
     cin>>n>>m;
     
     visited.assign(n+1,false);
