@@ -1,0 +1,128 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+#define F first
+#define S second
+using state = pair<int,int>;
+const int INT = 100;
+int n,m;
+
+vector<string> inp;
+
+int dx[] = {0,1,0,-1};
+int dy[] = {1,0,-1,0};
+char ch[] = {'R','D','L','U'};
+
+bool is_valid(int x,int y){
+    if(0<=x &&x<n && 0<=y && y<m && inp[x][y] != '#'){
+        return 1;
+    }else return 0;
+}
+
+vector<state> neighbours(state curr){
+    vector<state> neigh;
+    for(int dir = 0;dir<4;dir++){
+        int nx = curr.F + dx[dir];
+        int ny = curr.S + dy[dir];
+        if(is_valid(nx,ny))neigh.push_back({nx,ny});
+    }
+    
+    return neigh;
+}
+
+vector<vector<int>> vis,dist;
+vector<vector<state>> par;
+void bfs(state st){
+    //Setup
+    vis.assign(n,vector<int>(m,0));
+    dist.assign(n,vector<int>(m,100));
+    par.assign(n,vector<state>(m,{-1,-1}));
+    queue<state> q;
+    q.push(st);
+    dist[st.F][st.S] = 0;
+    par[st.F][st.S] = {-1,-1};
+    
+    //Queue loop
+    while(!q.empty()){
+        // take out from Queue
+        state curr = q.front();q.pop();
+        //visited marking
+        if(vis[curr.F][curr.S])continue;
+        vis[curr.F][curr.S] = 1;
+        //visite neighbours
+        for(auto v:neighbours(curr)){
+            if(!vis[v.F][v.S]){
+                //new neighbours -- propagation & Queue
+                dist[v.F][v.S] = dist[curr.F][curr.S] + 1;
+                par[v.F][v.S] = curr;
+                q.push(v);
+            }
+        }
+    }
+}
+
+void printer(vector<vector<int>> x){
+    for(auto v:x){
+        for(auto u:v){
+            cout<<u<<"\t";
+        }
+        cout<<endl;
+    }
+    cout<<endl;
+}
+
+int main()
+{
+    
+    cin>>n>>m;
+    inp.assign(n,"");
+    
+    state st,en;
+    for(int i = 0;i<n;i++){
+       cin>>inp[i];
+        for(int j = 0;j<m;j++){
+            if(inp[i][j] == 'A'){
+                st = {i,j};
+            }else if(inp[i][j] == 'B'){
+                en = {i,j};
+            }
+        }
+    }
+    
+    printer(dist);
+    printer(vis);
+    bfs(st);
+    printer(dist);
+    printer(vis);
+    
+    if(vis[en.F][en.S]){
+        cout<<"YES\n";
+        cout<<dist[en.F][en.S]<<endl;
+        
+        vector<state> path;
+        state cur = en;
+        while(cur != make_pair(-1,-1)){
+            path.push_back(cur);
+            cur = par[cur.F][cur.S];
+        }
+        reverse(path.begin(),path.end());
+        string str = "";
+        for(int i = 1;i<path.size();i++){
+            int idx = i-1;
+            int x = path[i].F - path[idx].F;
+            int y = path[i].S - path[idx].S;
+            
+            if(x == 0 && y == 1)str+="R";
+            else if(x == 1 && y == 0)str+="D";
+            else if(x == 0 && y == -1)str+="L";
+            else str+="U";
+        }
+        
+        
+        cout<<str<<endl;
+    }else{
+        cout<<"NO\n";
+    }
+    return 0;
+    
+}
