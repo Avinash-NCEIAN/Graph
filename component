@@ -1,0 +1,65 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+vector<vector<int>> g;
+vector<bool> vis;
+vector<int> comp_num;
+
+void dfs(int node, int &cc_val){
+    vis[node] = true;
+    comp_num[node] = cc_val;
+    
+    for(auto v: g[node]){
+        if(!vis[v]){
+            dfs(v,cc_val);
+            cc_val++;
+        }
+    }
+}
+
+int main(){
+    int n,m;
+    cin>>n>>m;
+    
+    g.resize(n+1);
+    vis.assign(n+1,false);
+    comp_num.resize(n+1,0);
+    
+    for(int i = 1;i<=m;i++){
+        int x,y;
+        cin>>x>>y;
+        
+        g[x].push_back(y);
+        g[y].push_back(x);
+    }
+    
+    int cc_val = 1;
+    for(int i = 1;i<=n;i++){
+        if(!vis[i]){
+            dfs(i,cc_val);
+            //cc_val++;
+        }
+    }
+    
+    for(int i = 1;i<=n;i++){
+        cout<<vis[i]<<" ";
+    }
+    
+    cout<<endl;
+    
+    for(int i = 1;i<=n;i++){
+        cout<<i<<" "<<comp_num[i]<<endl;
+    }
+    
+    vector<int> comp_sz(cc_val,0);
+    for(int i = 1;i<=n;i++){
+        comp_sz[comp_num[i]]++;
+    }
+    cout <<endl;
+    
+    for(int i = 1;i<=cc_val;i++){
+        cout<<i<<" "<<comp_sz[i]<<endl;
+    }
+    
+    return 0;
+}
