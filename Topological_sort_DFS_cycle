@@ -1,0 +1,58 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+int n,m;
+vector<vector<int>>g;
+vector<int>topo;
+vector<int>col;
+vector<int>cycle_path;
+int is_cycle = 0;
+
+void dfs(int node) {
+	col[node] = 2;
+	for(auto v:g[node]) {
+		if(col[v] == 1) {
+			dfs(v);
+		} else if(col[v] == 2) {
+			is_cycle = 1;
+		}
+	}
+	col[node] = 3;
+
+	topo.push_back(node);
+}
+
+int main()
+{
+	cin>>n>>m;
+	g.resize(n+1);
+	col.assign(n+1,1);
+
+	for(int i = 0; i<m; i++) {
+		int x,y;
+		cin>>x>>y;
+		g[x].push_back(y);
+	}
+
+	for(int i = 1; i<=n; i++) {
+		if(col[i] == 1)dfs(i);
+	}
+
+	int len = topo.size();
+	reverse(topo.begin(),topo.end());
+
+	if(is_cycle) {
+		cout<<"Cycle is present!!!"<<endl;
+	} else {
+		cout<<"No cycle"<<endl;
+		for(int i = 0; i<len; i++) {
+			cout<<topo[i]<<" ";
+		}
+	}
+
+	
+
+	return 0;
+
+}
+
