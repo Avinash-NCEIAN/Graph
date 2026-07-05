@@ -1,3 +1,5 @@
+// It correctly implements the DFS-based topological sort algorithm, but only for a DAG (Directed Acyclic Graph).
+
 #include<bits/stdc++.h>
 using namespace std;
 int n,m;
