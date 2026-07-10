@@ -1,0 +1,65 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+const int INF = 1e9;
+
+int n, m;
+
+struct Edge {
+    int u, v, wt;
+};
+
+vector<Edge> edges;
+vector<int> dist;
+
+void bellmanFord(int src) {
+    dist.assign(n + 1, INF);
+    dist[src] = 0;
+
+    // Relax all edges V-1 times
+    for (int i = 1; i <= n - 1; i++) {
+        for (auto e : edges) {
+            if (dist[e.u] != INF && dist[e.v] > dist[e.u] + e.wt)
+                dist[e.v] = dist[e.u] + e.wt;
+
+            if (dist[e.v] != INF && dist[e.u] > dist[e.v] + e.wt)
+                dist[e.u] = dist[e.v] + e.wt;
+        }
+    }
+
+    // Detect negative cycle
+    for (auto e : edges) {
+        if (dist[e.u] != INF && dist[e.v] > dist[e.u] + e.wt) {
+            cout << "Negative Weight Cycle\n";
+            return;
+        }
+
+        if (dist[e.v] != INF && dist[e.u] > dist[e.v] + e.wt) {
+            cout << "Negative Weight Cycle\n";
+            return;
+        }
+    }
+
+    cout << "Shortest distances:\n";
+    for (int i = 1; i <= n; i++) {
+        cout << i << " : ";
+        if (dist[i] == INF)
+            cout << "INF\n";
+        else
+            cout << dist[i] << '\n';
+    }
+}
+
+int main() {
+    cin >> n >> m;
+
+    for (int i = 0; i < m; i++) {
+        int a, b, c;
+        cin >> a >> b >> c;
+        edges.push_back({a, b, c});
+    }
+
+    bellmanFord(1);
+
+    return 0;
+}
