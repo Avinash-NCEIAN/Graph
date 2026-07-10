@@ -1,0 +1,58 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+int n,m;
+vector<vector<pair<int,int>>> g;
+vector<int> dist;
+
+void bfs01(int node) {
+	deque<int> dq;
+	dq.push_back(node);
+	dist[node] = 0;
+	while(!dq.empty()) {
+		int curr = dq.front();
+		dq.pop_front();
+
+		for(auto [v,wt]: g[curr]) {
+			if(dist[v]>dist[curr]+wt) {
+				dist[v]=dist[curr]+wt;
+
+				if(wt == 0) {
+					dq.push_front(v);
+				} else {
+					dq.push_back(v);
+				}
+			}
+		}
+	}
+}
+
+int main()
+{
+	cin>>n>>m;
+	g.resize(n+1);
+	dist.assign(n+1,1e9);
+
+	for(int i = 1; i<=m; i++) {
+		int a,b,c;
+		cin>>a>>b>>c;
+
+		g[a].push_back({b,c});
+		g[b].push_back({a,c});
+	}
+
+	for (int i = 1; i <= n; i++) {
+		cout << i << ": ";
+		for (auto [v, w] : g[i])
+			cout << "(" << v << "," << w << ") ";
+		cout << '\n';
+	}
+
+	int st = 1;
+	bfs01(st);
+
+	for(int i = 1; i<=n; i++) {
+		cout<<i<<" "<<dist[i]<<endl;
+	}
+	return 0;
+}
