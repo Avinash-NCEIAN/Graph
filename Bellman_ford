@@ -1,0 +1,60 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+int n,m;
+vector<vector<pair<int,int>>> g;
+vector<int> dist;
+
+void bellman_ford(int node) {
+	dist[node] = 0;
+
+	for(int i = 1; i<=n-1; i++) {
+		for(int u = 1; u<=n; u++) {
+			for(auto [v,wt]: g[u]) {
+				if(/*dist[u] != 1e9 &&*/ dist[v] >dist[u]+wt) {
+					dist[v] = dist[u]+wt;
+				 }//else{
+				//     cout << "Negative weight cycle\n";
+    // 				return;
+				// }
+				
+				if(i == n-1){
+				    cout << "Negative weight cycle\n";
+    				return;
+				}
+			}
+		}
+	}
+
+// 	for (int u = 1; u <= n; u++) {
+// 		for (auto [v, wt] : g[u]) {
+// 			if (dist[u] != 1e9 && dist[v] > dist[u] + wt) {
+// 				cout << "Negative weight cycle\n";
+// 				return;
+// 			}
+// 		}
+// 	}
+}
+
+int main()
+{
+	cin>>n>>m;
+	g.resize(n+1);
+	dist.assign(n+1,1e9);
+
+	for(int i = 1; i<=m; i++) {
+		int a,b,c;
+		cin>>a>>b>>c;
+		g[a].push_back({b,c});
+		// 		g[b].push_back({a,c});
+	}
+
+	int sc = 1;
+	bellman_ford(sc);
+
+	for(int i = 0; i<dist.size(); i++) {
+		cout<<i<<" "<<dist[i]<<endl;
+	}
+	return 0;
+
+}
