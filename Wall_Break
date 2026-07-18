@@ -1,0 +1,143 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+using state = pair<int,int>;
+#define F first
+#define S second
+
+const int INF = 1e9 + 7;
+int dx[] = {1,0,-1,0};
+int dy[] = {0,1,0,-1};
+int ch[] = {'R','U','L','D'};
+
+int n,m;
+vector<vector<char>> g;
+vector<vector<int>> vis,dist;
+vector<vector<state>> parent;
+
+vector<state> neighbours(state curr) {
+	vector<state> neigh;
+	for(int dir = 0; dir<4; dir++) {
+		int nx = dx[dir] + curr.F;
+		int ny = dy[dir] + curr.S;
+
+		if(nx>=0 && nx<n && ny>=0 && ny<m) {
+			neigh.push_back({nx,ny});
+		}
+	}
+
+	return neigh;
+}
+
+void Brake_Wall(state st) {
+	deque<state> dq;
+	dq.push_back(st);
+	dist[st.F][st.S] = 0;
+
+
+	while(!dq.empty()) {
+		state curr = dq.front();
+		dq.pop_front();
+		if(vis[curr.F][curr.S])continue;
+
+
+		vis[st.F][st.S] = 1;
+		for(auto v: neighbours(curr)) {
+			int w = 0;
+			if(g[v.F][v.S] == '#')w = 1;
+
+			if(dist[v.F][v.S] > dist[curr.F][curr.S]+w) {
+				parent[v.F][v.S] = curr;
+				dist[v.F][v.S] = dist[curr.F][curr.S]+w;
+
+				if(w = 0) {
+					dq.push_front(v);
+				} else {
+					dq.push_back(v);
+				}
+			}
+		}
+
+	}
+}
+
+void printer(vector<vector<int>> arr) {
+	for(int i = 0; i<n; i++) {
+		for(int j = 0; j<m; j++) {
+			cout<<arr[i][j]<<" ";
+		}
+		cout<<endl;
+	}
+}
+void printer1(vector<vector<state>> arr) {
+	for(int i = 0; i<n; i++) {
+		for(int j = 0; j<m; j++) {
+			cout<<arr[i][j].F<<" "<<arr[i][j].S<<" ";
+		}
+		cout<<endl;
+	}
+}
+
+int main()
+{
+	cin>>n>>m;
+	g.resize(n,vector<char>(m));
+	vis.assign(n,vector<int>(m,0));
+	dist.assign(n,vector<int>(m,INF));
+	parent.assign(n,vector<state>(m, {-1,-1}));
+
+
+	state st,en;
+	for(int i = 0; i<n; i++) {
+		for(int j = 0; j<m; j++) {
+			cin>>g[i][j];
+			if(g[i][j] == 'S') {
+				st = {i,j};
+			}
+
+			if(g[i][j] == 'E') {
+				en = {i,j};
+			}
+		}
+	}
+
+	printer(dist);
+	printer1(parent);
+	Brake_Wall(st);
+	printer(dist);
+	printer1(parent);
+
+	if(dist[en.F][en.S] == INF) {
+		cout<<"NO\t"<<endl;
+	} else {
+		cout<<"YES\t"<<endl;
+		cout<<dist[en.F][en.S]<<endl;
+
+		vector<state> path;
+		state curr = en;
+		while(curr != make_pair(-1,-1)) {
+			path.push_back(curr);
+			curr = parent[curr.F][curr.S];
+		}
+
+		reverse(path.begin(),path.end());
+		for(int i = 0; i<(int)path.size(); i++) {
+			cout<<path[i].F<<" "<<path[i].S<<" ";
+			cout<<endl;
+		}
+
+        for(int i = 1; i<(int)path.size(); i++) {
+			int cx = path[i].F - path[i-1].F; 
+			int cy = path[i].S - path[i-1].S; 
+			if(cx == 1)cout<<'D';
+			else if(cx == -1)cout<<'U';
+			else if(cy == 1)cout<<'R';
+			else cout<<"L";
+		}
+
+	}
+
+	return 0;
+}
+
+
