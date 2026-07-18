@@ -101,11 +101,11 @@ int main()
 		}
 	}
 
-	printer(dist);
-	printer1(parent);
+	//printer(dist);
+	//printer1(parent);
 	Brake_Wall(st);
-	printer(dist);
-	printer1(parent);
+	//printer(dist);
+	//printer1(parent);
 
 	if(dist[en.F][en.S] == INF) {
 		cout<<"NO\t"<<endl;
