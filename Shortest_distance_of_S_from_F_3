@@ -1,0 +1,119 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+using state = pair<int,int>;
+#define F first
+#define S second
+const int INF = 1e9 + 7;
+
+int dx[] = {0,1,0,-1};
+int dy[] = {1,0,-1,0};
+
+int n,m;
+vector<vector<char>>g;
+vector<vector<int>> vis,dist;
+vector<state> all_st,all_en;
+vector<vector<state>> root;
+
+vector<state> neighbours(state curr)
+{
+	vector<state> neigh;
+	for(int dir = 0; dir<4; dir++) {
+		int nx = dx[dir] + curr.F;
+		int ny = dy[dir] + curr.S;
+
+		if(nx>=0 && nx<n && ny>= 0 && ny<m && g[nx][ny] != '#') {
+			neigh.push_back({nx,ny});
+		}
+	}
+
+	return neigh;
+}
+
+void bfs(state st)
+{
+	queue<state> q;
+	for(auto st: all_st) {
+		q.push(st);
+		dist[st.F][st.S] = 0;
+		root[st.F][st.S] = st;
+	}
+
+	while(!q.empty()) {
+		state curr = q.front();
+		q.pop();
+		if(vis[curr.F][curr.S]) continue;
+
+		vis[curr.F][curr.S] = 1;
+
+		for(auto v: neighbours(curr)) {
+			if(!vis[v.F][v.S]) {
+				dist[v.F][v.S] = dist[curr.F][curr.S] + 1;
+				root[v.F][v.S] = root[curr.F][curr.S];
+				q.push(v);
+			}
+		}
+
+	}
+}
+
+void printer(vector<vector<int>> arr) {
+	for(int i = 0; i<n; i++) {
+		for(int j = 0; j<m; j++) {
+			cout<<arr[i][j]<<" ";
+		}
+		cout<<endl;
+	}
+}
+
+int main()
+{
+	cin>>n>>m;
+	g.resize(n,vector<char>(m));
+	vis.assign(n,vector<int>(m,0));
+	dist.assign(n,vector<int>(m,INF));
+	root.assign(n,vector<state>(m, {-1,-1}));
+
+	for(int i = 0; i<n; i++) {
+		for(int j = 0; j<m; j++) {
+			cin>>g[i][j];
+			if(g[i][j] == 'F') {
+				all_st.push_back({i,j});
+			} else if(g[i][j] == 'S') {
+				all_en.push_back({i,j});
+			}
+		}
+	}
+
+	// printer(dist);
+	// for(int i = 0;i<all_st.size();i++){
+	//     bfs(all_st[i]);
+	// }
+	// printer(dist);
+
+	// cout<<endl;
+	// for(auto en: all_en){
+	//     cout<<"{"<<en.F<<","<<en.S<<"} : "<<dist[en.F][en.S]<<" : root "<<
+	//     "{"<<root[en.F][en.S].F<<","<<root[en.F][en.S].S<<"}"<<endl;
+	// }
+	for(auto v: all_st) {
+		printer(dist);
+	
+		bfs({v});
+
+		printer(dist);
+
+		cout<<endl;
+		for(auto en: all_en) {
+			cout<<"{"<<en.F<<","<<en.S<<"} : "<<dist[en.F][en.S]<<" : root "<<
+			    "{"<<root[en.F][en.S].F<<","<<root[en.F][en.S].S<<"}"<<endl;
+		}
+	}
+
+
+
+	return 0;
+}
+
+
+
