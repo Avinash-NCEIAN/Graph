@@ -1,0 +1,103 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+using state = pair<int,int>;
+#define F first
+#define S second
+const int INF = 1e9 + 7;
+
+int dx[] = {0,1,0,-1};
+int dy[] = {1,0,-1,0};
+
+int n,m;
+vector<vector<char>>g;
+vector<vector<int>> dist,num_path;
+
+vector<state> neighbours(state curr)
+{
+	vector<state> neigh;
+	for(int dir = 0; dir<4; dir++) {
+		int nx = dx[dir] + curr.F;
+		int ny = dy[dir] + curr.S;
+
+		if(nx>=0 && nx<n && ny>= 0 && ny<m && g[nx][ny] != '#') {
+			neigh.push_back({nx,ny});
+		}
+	}
+
+	return neigh;
+}
+
+void bfs(state st)
+{
+	queue<state> q;
+	q.push(st);
+	dist[st.F][st.S] = 0;
+    num_path[st.F][st.S] = 1;
+
+	while(!q.empty()) {
+		state curr = q.front();
+		q.pop();
+
+		for(auto v: neighbours(curr)) {
+			if(dist[v.F][v.S] == INF) {
+				dist[v.F][v.S] = dist[curr.F][curr.S] + 1;
+				num_path[v.F][v.S] = num_path[curr.F][curr.S];
+				q.push(v);
+			}else if(dist[v.F][v.S] == dist[curr.F][curr.S] + 1){
+			    num_path[v.F][v.S] += num_path[curr.F][curr.S];
+			}
+		}
+
+	}
+}
+
+void printer(vector<vector<int>> arr) {
+	for(int i = 0; i<n; i++) {
+		for(int j = 0; j<m; j++) {
+			cout<<arr[i][j]<<" ";
+		}
+		cout<<endl;
+	}
+}
+
+int main()
+{
+	cin>>n>>m;
+	g.resize(n,vector<char>(m));
+	dist.assign(n,vector<int>(m,INF));
+	num_path.assign(n,vector<int>(m,0));
+    state st,en;
+    
+	for(int i = 0; i<n; i++) {
+		for(int j = 0; j<m; j++) {
+			cin>>g[i][j];
+			if(g[i][j] == 'S') {
+				st = {i,j};
+			} else if(g[i][j] == 'F') {
+				en = {i,j};
+			}
+		}
+	}
+
+
+	bfs(st);
+// 	printer(num_path);
+	for(int i = 0; i<n; i++) {
+		for(int j = 0; j<m; j++) {
+			cout<<"{ "<<dist[i][j]<<","<<num_path[i][j]<<"}  ";
+		}
+		cout<<endl;
+	}
+
+// 	printer(dist);
+
+
+
+
+
+	return 0;
+}
+
+
+
